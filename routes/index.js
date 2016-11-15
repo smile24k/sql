@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../config/default');
+var User = require('../model/user')
 /* GET home page. */
 router.get('/', (req, res, next) => {
   res.redirect('/login')
@@ -19,27 +20,26 @@ router.post('/register', (req, res, next) => {
     if (req.body.password == '' || req.body.password !== req.body.confirm) {
         res.render('register', { message: "请确认密码" });
     };
-    db.getConnection(function(err, connection) {
-        if (err) throw err;
-        //密码是否匹配
-        connection.query(`SELECT name FROM users WHERE name = '${req.body.name}'`, function(err, rows) {
-            if (err) throw err;
-            if (rows != '' && rows[0].name === req.body.name) {
-                res.render('../views/account-register.hbs', { message: "用户名已存在" });
-                return false;
-            } else {
-                console.log(req.body.name)
-                var insert = `INSERT INTO users(name, password) VALUES ('${req.body.name}','${req.body.password}')`;
-                db.query(insert, function(err, result) {
-                    if (err) throw err;
-                });
-                res.redirect('/login')
-                //res.redirect('/login')
-            };
-            connection.release();
-
+    // 根据用户传入的用户名判断是否已经存在
+    User.getByUsername(req.body.name)
+        .then(user => {
+            // 查询成功了，但是有没有查到数据不知道
+            if (user) {
+                return Promise.reject(new Error('用户名已存在！'));
+            }
+            // 用户名不存在
+            return User.create({
+                name: req.body.name,
+                password: req.body.password
+            }).save();
+        })
+        .then(user => {
+            res.redirect('/login');
+        })
+        .catch(error => {
+            // promise 过程中出现错误了
+            res.render('register', { message: error.message });
         });
-    })
 });
 //登录
 router.get('/login', (req, res, next) => {
@@ -48,24 +48,28 @@ router.get('/login', (req, res, next) => {
 });
 
 router.post('/login', (req, res, next) => {
-    db.query(`SELECT name FROM users WHERE name = '${req.body.name}' AND password = '${req.body.password}'`, function(err, rows, fields) {
-        if (err) throw err;
-        if (rows == '' ) {
-            res.render('login', { message: "用户名或密码不对" });
-        } else{
-            //设置cookie session
-            res.cookie(`${rows[0].name}`,'liang');
-            req.session.user_name = rows[0].name;
+    User.getByUsername(req.body.name)
+        .then(user => {
+            if (!user) {
+                return Promise.reject(new Error('用户名或密码错误！'));
+            }
+            // 用户名存在 校验密码
+            if (user.password !== req.body.password) {
+                return Promise.reject(new Error('用户名或密码错误！'));
+            }
+            // res.cookie('current_user', user);
+            req.session.user_name = user;
+            // 跳转
             res.redirect('/index');
-        };
-
-
-    });
+        })
+        .catch(error => {
+            res.render('login', { message: error.message });
+        });
 
 });
 
 //index页
 router.get('/index', (req, res, next) => {
-    res.render('index',{message: `${req.session}`});
+    res.render('index',{message: `${req.session.user_name.name}`});
 });
 module.exports = router;
