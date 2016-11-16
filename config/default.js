@@ -13,4 +13,12 @@ var pool = mysql.createPool({
     password: 'root',
     database: 'myblog'
 });
-module.exports = pool;
+exports.query = (sql, params) => new Promise((resolve, reject) => {
+    pool.query(sql, params, (error, result, fields) => {
+        if (error) {
+            reject(error);
+        } else {
+            resolve(result, fields);
+        }
+    });
+});
