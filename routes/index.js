@@ -90,7 +90,6 @@ router.post('/post', (req, res, next) => {
 //我的blog文章列表
 router.get('/my_post',checkLogin, (req, res, next) => {
     //从数据库取数据
-    console.log(req.session.user_name.name);
     Post.getList(req.session.user_name.name)
         .then((user) => {
             res.locals.name = req.session.user_name.name;
@@ -100,6 +99,18 @@ router.get('/my_post',checkLogin, (req, res, next) => {
 
 });
 
+
+//翻页操作
+router.get('/my_post/:page',checkLogin, (req, res, next) => {
+    console.log(req.body);
+    Post.getList(req.session.user_name.name)
+        .then((user) => {
+            res.locals.name = req.session.user_name.name;
+            res.locals.titles = user;
+            res.render('mypost');
+        }).catch((err) => {throw err;});
+
+});
 
 //index页
 router.get('/index',checkLogin, (req, res, next) => {

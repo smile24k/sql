@@ -44,8 +44,8 @@ Post.prototype.save = function() {
 /**
  *获取文章
  */
-Post.getList = (name) => new Promise((resolve, reject) => {
-    db.query(`SELECT * FROM posts WHERE name = '${name}' limit 10`)
+Post.getList = (name, id) => new Promise((resolve, reject) => {
+    db.query(`SELECT * FROM posts WHERE name = '${name}' limit 1,${1+10}`)
         .then((result) => {
             //var user = Post.create(result);
             resolve(result);
