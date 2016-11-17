@@ -58,6 +58,7 @@ router.post('/login', (req, res, next) => {
                 return Promise.reject(new Error('用户名或密码错误！'));
             }
             // res.cookie('current_user', user);
+            //设置session
             req.session.user_name = user;
             // 跳转
             res.redirect('/index');
@@ -68,6 +69,12 @@ router.post('/login', (req, res, next) => {
 
 });
 
+//退出登录
+router.get('/loginOut', (req, res, next) => {
+    //清除session
+    req.session.user_name = null;
+    res.redirect('/login');
+});
 
 router.get('/post', checkLogin, (req, res, next) =>{
     res.locals.name = req.session.user_name.name;
