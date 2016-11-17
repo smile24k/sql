@@ -25,7 +25,6 @@ Post.create = (obj) => {
  *存储文章
  */
 Post.prototype.save = function() {
-    console.log(24555);
     return new Promise((resolve, reject) => {
         db.query(`INSERT INTO posts SET ?`, this)
             .then((result) => {
@@ -44,8 +43,10 @@ Post.prototype.save = function() {
 /**
  *获取文章
  */
-Post.getList = (name, id) => new Promise((resolve, reject) => {
-    db.query(`SELECT * FROM posts WHERE name = '${name}' limit 1,${1+10}`)
+Post.getList = (name, page) => new Promise((resolve, reject) => {
+    //控制一次取几条
+    var queryItem = 5;
+    db.query(`SELECT * FROM posts WHERE name = '${name}' limit ${page == 1?page = page-1:page= queryItem*page-queryItem},${queryItem}`)
         .then((result) => {
             //var user = Post.create(result);
             resolve(result);
