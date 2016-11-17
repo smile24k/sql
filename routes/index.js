@@ -70,7 +70,6 @@ router.post('/login', (req, res, next) => {
 
 
 router.get('/post', checkLogin, (req, res, next) =>{
-    console.log(req.session.user_name.name);
     res.locals.name = req.session.user_name.name;
     res.render('post');
 })
@@ -84,26 +83,29 @@ router.post('/post', (req, res, next) => {
             time: new Date()
         }).save();
     }
-    res.redirect('/my_post')
+    res.redirect('/my_post/1')
 });
 
 //我的blog文章列表
-router.get('/my_post',checkLogin, (req, res, next) => {
-    //从数据库取数据
-    Post.getList(req.session.user_name.name)
-        .then((user) => {
-            res.locals.name = req.session.user_name.name;
-            res.locals.titles = user;
-            res.render('mypost');
-        }).catch((err) => {throw err;});
-
-});
+//router.get('/my_post',checkLogin, (req, res, next) => {
+//    //从数据库取数据
+//    Post.getList(req.session.user_name.name)
+//        .then((user) => {
+//            res.locals.name = req.session.user_name.name;
+//            res.locals.titles = user;
+//            res.render('mypost');
+//        }).catch((err) => {throw err;});
+//
+//});
 
 
 //翻页操作
 router.get('/my_post/:page',checkLogin, (req, res, next) => {
-    console.log(req.body);
-    Post.getList(req.session.user_name.name)
+    console.log(req.params.page);
+
+    //判断是否是第一页，并把请求的页数转换成 number 类型
+    var page = req.params.page > 0 ? parseInt(req.params.page) : 1;
+    Post.getList(req.session.user_name.name, page)
         .then((user) => {
             res.locals.name = req.session.user_name.name;
             res.locals.titles = user;
@@ -117,8 +119,6 @@ router.get('/index',checkLogin, (req, res, next) => {
     res.locals.name = req.session.user_name.name;
     res.render('index');
 });
-
-
 
 
 //检查是否登录
