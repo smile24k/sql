@@ -157,6 +157,16 @@ router.get('/delete/:name/:title',checkLogin, function (req,res) {
     res.redirect('/my_post/1');
 })
 
+
+
+//收藏页
+
+router.get('/my_guanzhu',checkLogin, function (req,res) {
+    res.locals.name = req.session.user_name.name;
+    res.render('shoucang');
+})
+
+
 //index页
 router.get('/index/:page',checkLogin, (req, res, next) => {
 
