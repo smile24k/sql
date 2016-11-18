@@ -61,7 +61,7 @@ router.post('/login', (req, res, next) => {
             //设置session
             req.session.user_name = user;
             // 跳转
-            res.redirect('/index');
+            res.redirect('/index/1');
         })
         .catch(error => {
             res.render('login', { message: error.message });
@@ -87,7 +87,7 @@ router.post('/post', (req, res, next) => {
             name: req.session.user_name.name,
             post: req.body.post,
             title: req.body.title,
-            time: new Date()
+            time: new Date().toLocaleString()
         }).save();
     }
     res.redirect('/my_post/1')
@@ -108,8 +108,6 @@ router.post('/post', (req, res, next) => {
 
 //翻页操作
 router.get('/my_post/:page',checkLogin, (req, res, next) => {
-    console.log(req.params.page);
-
     //判断是否是第一页，并把请求的页数转换成 number 类型
     var page = req.params.page > 0 ? parseInt(req.params.page) : 1;
     Post.getList(req.session.user_name.name, page)
@@ -121,10 +119,54 @@ router.get('/my_post/:page',checkLogin, (req, res, next) => {
 
 });
 
+//编辑页
+router.get('/edit/:name/:title',checkLogin, function (req,res) {
+    Post.getOne(req.params.name, req.params.title)
+        .then((user) => {
+            res.locals.name = req.session.user_name.name;
+            res.locals.edit = user;
+            res.render('edit');
+        }).catch((err) => {throw err;});
+})
+
+//详情页
+router.get('/detail/:name/:title',checkLogin, function (req,res) {
+    Post.getOne(req.params.name, req.params.title)
+        .then((user) => {
+            res.locals.name = req.session.user_name.name;
+            res.locals.detail = user;
+            res.render('detail');
+        }).catch((err) => {throw err;});
+})
+
+//修改页面
+
+router.post('/modify', (req, res, next) => {
+    var time = new Date().toLocaleString();
+    if(req.body.title != ''){
+        Post.updateOne(time,req.body.post,req.body.title);
+        res.redirect('/my_post/1');
+    }
+
+});
+
+//删除
+
+router.get('/delete/:name/:title',checkLogin, function (req,res) {
+    Post.deleteOne(req.params.name, req.params.title);
+    res.redirect('/my_post/1');
+})
+
 //index页
-router.get('/index',checkLogin, (req, res, next) => {
-    res.locals.name = req.session.user_name.name;
-    res.render('index');
+router.get('/index/:page',checkLogin, (req, res, next) => {
+
+    var page = req.params.page > 0 ? parseInt(req.params.page) : 1;
+    Post.getAll(page)
+        .then((user) => {
+            res.locals.name = req.session.user_name.name;
+            res.locals.titles = user;
+            res.render('index');
+        }).catch((err) => {throw err;});
 });
 
 

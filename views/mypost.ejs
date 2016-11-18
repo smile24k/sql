@@ -3,15 +3,15 @@
 <div class="row">
     <%- include menu%>
     <div class="col-md-10 col-sm-9">
-        <div class="list-group">
+        <ul class="list-group">
             <% titles.forEach(function(title, index){ %>
-            <a href="#" class="list-group-item" id="pageAllItem">
-                <h4 class="list-group-item-heading"><%= title.title%></h4>
-                <span class="badge">作者:<%= title.name%></span>
-                <p class="list-group-item-text" style="overflow: hidden"><%= title.post%></p>
-            </a>
+            <li href="#" class="list-group-item pageAllItem">
+                <a href="/delete/<%= title.name%>/<%= title.title%>" class="badge delete">删除</a>
+                <a href="/edit/<%= title.name%>/<%= title.title%>" class="badge edit" >编辑</a>
+                <a href="/detail/<%= title.name%>/<%= title.title%>"><%= title.title%></a>
+            </li>
             <% })%>
-        </div>
+        </ul>
         <nav>
             <ul class="pager">
                 <li ><a class="btn" id="prePage">上一页</a></li>

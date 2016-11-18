@@ -1,0 +1,23 @@
+<%- include header %>
+<%- include headerbar %>
+<div class="row">
+    <%- include menu%>
+    <div class="col-md-10 col-sm-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><%= detail[0].title %></h3>
+            </div>
+            <div class="panel-body" style="height: 300px; overflow-y: auto">
+                <%= detail[0].post%>
+            </div>
+            <p style="float: right;">作者:<a href="#"><%= detail[0].name%></a></p>
+        </div>
+    </div>
+</div>
+<%- include footer %>
+
+
+
+
+
+

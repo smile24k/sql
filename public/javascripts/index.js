@@ -11,10 +11,10 @@
         if(pageAllItem != 10){
             this.setAttribute('disabled','disabled');
             return false;
-            location.pathname = `/my_post/${s}`;
+            location.pathname = `/index/${s}`;
         }else{
             s++;
-            location.pathname = `/my_post/${s}`;
+            location.pathname = `/index/${s}`;
         }
 
     })
@@ -23,10 +23,12 @@
         if(s == 1){
             this.setAttribute('disabled','disabled');
             return false;
-            location.pathname = `/my_post/${s}`;
+            location.pathname = `/index/${s}`;
         }else{
             s--;
-            location.pathname = `/my_post/${s}`;
+            location.pathname = `/index/${s}`;
         }
+
+
     })
 })()

@@ -8,6 +8,43 @@
 <script src="/bower_components/metisMenu/dist/metisMenu.min.js"></script>
 <!-- Custom Theme JavaScript -->
 <script src="/javascripts/sb-admin-2.js"></script>
+<script>
+    (function () {
+        var path = location.pathname.split('/')[1];
+        switch (path){
+            case 'post':
+                $(".menu .sendblog").addClass('active').siblings().removeClass('active');
+                break;
+            case 'my_post':
+                $(".menu .myblog").addClass('active').siblings().removeClass('active');
+                break;
+            case 'my_guanzhu':
+                $(".menu .myguanzhu").addClass('active').siblings().removeClass('active');
+                break;
+            case 'edit':
+                $(".menu .myblog").addClass('active').siblings().removeClass('active');
+                break;
+            case 'detail':
+                $(".menu .myblog").addClass('active').siblings().removeClass('active');
+                break;
+            case 'index':
+                $(".menu .index").addClass('active').siblings().removeClass('active');
+                break;
+            default :
+                $(".menu a").removeClass('active');
+                break;
+        }
+//        $(".menu .sendblog").on('click', function () {
+//            $(this).addClass('active');
+//        });
+//        $(".menu .myblog").on('click', function () {
+//            $(this).addClass('active');
+//        });
+//        $(".menu .myguanzhu").on('click', function () {
+//            $(this).addClass('active');
+//        });
+    })()
+</script>
 </body>
 
 </html>
